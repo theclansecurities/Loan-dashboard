@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property & Loan Dashboard</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-raised: #fafafa;
+      --input-bg: #f0f0f5;
+      --text: #1a1a2e;
+      --text-sec: #4a4a5a;
+      --text-tert: #8a8a9a;
+      --border: #dddde5;
+      --accent: #d4a843;
+      --green: #16a34a;
+      --red: #dc2626;
+      --blue: #2563eb;
+      --radius: 10px;
+      --shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      --chart-grid: #e0e0e8;
+      --chart-text: #6a6a7a;
+    }
+
+    [data-theme="dark"] {
+      --bg: #12121e;
+      --surface: #1e1e2e;
+      --surface-raised: #252538;
+      --input-bg: #2a2a3e;
+      --text: #e8e8f0;
+      --text-sec: #a0a0b0;
+      --text-tert: #6a6a7a;
+      --border: #33334a;
+      --accent: #e8c158;
+      --green: #4ade80;
+      --red: #f87171;
+      --blue: #60a5fa;
+      --shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+      --chart-grid: #2a2a3e;
+      --chart-text: #8a8a9a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      line-height: 1.5;
+      font-size: 15px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-sec);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 180px;
+      margin-bottom: 4px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-sec);
+      margin-bottom: 6px;
+    }
+
+    .field label .req {
+      color: var(--red);
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--accent);
+      color: #1a1a2e;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      opacity: 0.88;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    .btn-danger {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--red);
+    }
+
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .schedule-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      padding: 12px;
+      background: var(--surface-raised);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .schedule-row .field {
+      min-width: 140px;
+      margin-bottom: 0;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-tert);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .tab:hover {
+      color: var(--text-sec);
+    }
+
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .metrics {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .metric-box {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .metric {
+      font-size: 24px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.2;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-tert);
+      margin-top: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .compare-card {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .compare-card h4 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sec);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-green {
+      background: rgba(22, 163, 74, 0.12);
+      color: var(--green);
+    }
+
+    .badge-blue {
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--blue);
+    }
+
+    .chart-wrap {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sec);
+      margin-bottom: 12px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 300px;
+      display: block;
+    }
+
+    .table-wrap {
+      max-height: 320px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 8px;
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th,
+    td {
+      text-align: right;
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--text-sec);
+      font-size: 11px;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    .highlight-pos {
+      color: var(--green);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 0 8px;
+    }
+
+    .toggle-row input {
+      width: auto;
+      accent-color: var(--accent);
+    }
+
+    .toggle-row label {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-sec);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--text-tert);
+      font-size: 12px;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 720px) {
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .schedule-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      body {
+        padding: 12px;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body data-theme="dark">
+  <div class="container">
+    <header>
+      <h1>Property & Loan Dashboard</h1>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5" />
+          <path
+            d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+        </svg>
+        <span>Light mode</span>
+      </button>
+    </header>
+
+    <div class="card">
+      <div class="section-title">Basic Information</div>
+      <div class="row">
+        <div class="field"><label>Property Name <span class="req">*</span></label><input type="text" id="prop-name"
+            placeholder="e.g. Green Valley Residency"></div>
+        <div class="field"><label>Location <span class="req">*</span></label><input type="text" id="prop-loc"
+            placeholder="e.g. Bangalore"></div>
+        <div class="field"><label>Property Price (Rs) <span class="req">*</span></label><input type="number"
+            id="prop-price" value="7500000" onchange="syncLoan()"></div>
+        <div class="field"><label>Property Type</label>
+          <select id="prop-type">
+            <option>3 BHK Apartment</option>
+            <option>2 BHK Apartment</option>
+            <option>4 BHK Villa</option>
+            <option>Plot / Land</option>
+            <option>Commercial</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <div class="field"><label>Carpet Area (sq ft)</label><input type="number" id="prop-area"
+            placeholder="e.g. 1200"></div>
+        <div class="field"><label>Appreciation Rate (% p.a.)</label><input type="number" step="0.1" id="prop-apprec"
+            value="8"></div>
+        <div class="field"><label>Possession Date <span class="req">*</span></label><input type="date" id="prop-date">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Payment Schedule <span class="req">*</span></div>
+      <div id="schedule-rows">
+        <div class="schedule-row" data-idx="0">
+          <div class="field"><label>Date</label><input type="date" class="sched-date"></div>
+          <div class="field"><label>Amount (Rs)</label><input type="number" class="sched-amt" value="1600000"
+              placeholder="Amount"></div>
+          <div class="field"><label>Funding Type</label>
+            <select class="sched-type">
+              <option>Equity</option>
+              <option>Loan</option>
+              <option>Subsidy</option>
+            </select>
+          </div>
+          <div class="field"><button class="btn btn-danger btn-sm" onclick="removeScheduleRow(this)">Remove</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="addScheduleRow()" style="margin-top:4px;">+ Add Payment</button>
+      <div class="row" style="margin-top:16px;">
+        <div class="metric-box">
+          <div class="metric" id="total-paid">Rs0</div>
+          <div class="metric-label">Total paid so far</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric" id="total-equity">Rs0</div>
+          <div class="metric-label">Total equity</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric" id="total-loan">Rs0</div>
+          <div class="metric-label">Total loan drawn</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric" id="remaining">Rs0</div>
+          <div class="metric-label">Remaining to pay</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Loan Configuration</div>
+      <div class="row">
+        <div class="field"><label>EMI Starts From</label>
+          <select id="emi-start">
+            <option>Possession Date</option>
+            <option>Booking Date</option>
+            <option>Custom</option>
+          </select>
+        </div>
+        <div class="field"><label>Loan Tenure (years)</label><input type="number" id="loan-tenure" value="20"></div>
+        <div class="field"><label>Interest Rate (% p.a.)</label><input type="number" step="0.01" id="loan-rate"
+            value="8.5"></div>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <div class="field"><label>Loan Amount (Rs)</label><input type="number" id="loan-principal" value="5000000">
+        </div>
+        <div class="field"><label>Pre-payment Amount (Rs)</label><input type="number" id="loan-prepay" value="50000"
+            placeholder="Optional"></div>
+        <div class="field"><label>Pre-pay every (months)</label><input type="number" id="loan-prepay-every" value="12"
+            placeholder="Optional"></div>
+      </div>
+      <div style="margin-top:16px;"><button class="btn" onclick="runAllCalculations()">Calculate & Show Graphs</button>
+      </div>
+    </div>
+
+    <div id="results-area" class="hidden">
+      <div class="tabs">
+        <button class="tab active" data-tab="amort" onclick="switchTab('amort')">Amortization</button>
+        <button class="tab" data-tab="prepay" onclick="switchTab('prepay')">Pre-payment</button>
+        <button class="tab" data-tab="ratecut" onclick="switchTab('ratecut')">Rate Cut</button>
+      </div>
+
+      <div class="panel active" id="panel-amort">
+        <div class="card">
+          <div class="metrics">
+            <div class="metric-box">
+              <div class="metric" id="a-em"></div>
+              <div class="metric-label">Monthly EMI</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric" id="a-total"></div>
+              <div class="metric-label">Total payment</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric" id="a-interest"></div>
+              <div class="metric-label">Total interest</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric" id="a-ratio"></div>
+              <div class="metric-label">Interest / Principal</div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Principal vs Interest breakdown over tenure</div><canvas id="chart-amort"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Outstanding balance over time</div><canvas id="chart-balance"></canvas>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="a-showtable" onchange="toggleTable('a-tablewrap', this.checked)">
+          <label for="a-showtable">Show amortization table</label>
+        </div>
+        <div class="table-wrap hidden" id="a-tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>EMI</th>
+                <th>Interest</th>
+                <th>Principal</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="a-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-prepay">
+        <div class="card">
+          <div class="metrics">
+            <div class="metric-box">
+              <div class="metric" id="p-base-em"></div>
+              <div class="metric-label">Base EMI</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric" id="p-base-int"></div>
+              <div class="metric-label">Base total interest</div>
+            </div>
+          </div>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <h4>Scenario A: Same EMI, shorter tenure <span class="badge badge-green">Recommended</span></h4>
+            <div class="metrics" style="flex-direction:column;gap:10px;">
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="p-sa-tenure"></div>
+                <div class="metric-label">New tenure</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="p-sa-int"></div>
+                <div class="metric-label">Total interest</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric highlight-pos" style="font-size:20px;" id="p-sa-save"></div>
+                <div class="metric-label">Interest saved</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="p-sa-prepaid"></div>
+                <div class="metric-label">Total pre-paid</div>
+              </div>
+            </div>
+          </div>
+          <div class="compare-card">
+            <h4>Scenario B: Reduced EMI, same tenure</h4>
+            <div class="metrics" style="flex-direction:column;gap:10px;">
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="p-sb-em"></div>
+                <div class="metric-label">New EMI</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="p-sb-int"></div>
+                <div class="metric-label">Total interest</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric highlight-pos" style="font-size:20px;" id="p-sb-save"></div>
+                <div class="metric-label">Interest saved</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="p-sb-prepaid"></div>
+                <div class="metric-label">Total pre-paid</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Outstanding balance: Base vs Pre-pay (Scenario A)</div><canvas
+            id="chart-prepay"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Cumulative interest paid comparison</div><canvas id="chart-prepay-int"></canvas>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="p-showtable" onchange="toggleTable('p-tablewrap', this.checked)">
+          <label for="p-showtable">Show scenario A amortization table</label>
+        </div>
+        <div class="table-wrap hidden" id="p-tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>EMI</th>
+                <th>Interest</th>
+                <th>Principal</th>
+                <th>Pre-pay</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="p-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-ratecut">
+        <div class="card">
+          <div class="metrics">
+            <div class="metric-box">
+              <div class="metric" id="r-base-em"></div>
+              <div class="metric-label">Current EMI</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric" id="r-base-int"></div>
+              <div class="metric-label">Current total interest</div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:16px;">
+          <div class="field"><label>New Rate (%)</label><input type="number" step="0.01" id="r-newrate" value="7.5">
+          </div>
+          <div class="field" style="display:flex;align-items:flex-end;"><button class="btn"
+              onclick="calcRatecut()">Compare Rate Cut</button></div>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <h4>Option 1: Lower EMI, same tenure</h4>
+            <div class="metrics" style="flex-direction:column;gap:10px;">
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="r-o1-em"></div>
+                <div class="metric-label">New EMI</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="r-o1-int"></div>
+                <div class="metric-label">Total interest</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric highlight-pos" style="font-size:20px;" id="r-o1-save"></div>
+                <div class="metric-label">Interest saved</div>
+              </div>
+            </div>
+          </div>
+          <div class="compare-card">
+            <h4>Option 2: Same EMI, shorter tenure <span class="badge badge-green">Recommended</span></h4>
+            <div class="metrics" style="flex-direction:column;gap:10px;">
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="r-o2-tenure"></div>
+                <div class="metric-label">New tenure</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric" style="font-size:20px;" id="r-o2-int"></div>
+                <div class="metric-label">Total interest</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric highlight-pos" style="font-size:20px;" id="r-o2-save"></div>
+                <div class="metric-label">Interest saved</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Balance comparison: Current vs Rate Cut options</div><canvas
+            id="chart-ratecut"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Total interest comparison</div><canvas id="chart-ratecut-bar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">All calculations run locally in your browser. No data is sent anywhere.</div>
+  </div>
+
+  <script>
+    function fmt(n) { return n.toLocaleString('en-IN', { maximumFractionDigits: 0 }); }
+    function fmt2(n) { return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function getEMI(P, r, n) { return P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
+
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById('themeBtn');
+      const isDark = body.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        body.removeAttribute('data-theme');
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span>Dark mode</span>`;
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><span>Light mode</span>`;
+      }
+      setTimeout(redrawAllCharts, 50);
+    }
+
+    function addScheduleRow() {
+      const container = document.getElementById('schedule-rows');
+      const div = document.createElement('div');
+      div.className = 'schedule-row';
+      div.innerHTML = `
+      <div class="field"><label>Date</label><input type="date" class="sched-date"></div>
+      <div class="field"><label>Amount (Rs)</label><input type="number" class="sched-amt" placeholder="Amount"></div>
+      <div class="field"><label>Funding Type</label>
+        <select class="sched-type"><option>Equity</option><option>Loan</option><option>Subsidy</option></select>
+      </div>
+      <div class="field"><button class="btn btn-danger btn-sm" onclick="removeScheduleRow(this)">Remove</button></div>`;
+      container.appendChild(div);
+      updateScheduleSummary();
+    }
+    function removeScheduleRow(btn) {
+      const row = btn.closest('.schedule-row');
+      if (document.querySelectorAll('.schedule-row').length > 1) row.remove();
+      updateScheduleSummary();
+    }
+    function updateScheduleSummary() {
+      let total = 0, equity = 0, loan = 0;
+      document.querySelectorAll('.schedule-row').forEach(row => {
+        const amt = +row.querySelector('.sched-amt').value || 0;
+        const type = row.querySelector('.sched-type').value;
+        total += amt;
+        if (type === 'Equity') equity += amt;
+        else if (type === 'Loan') loan += amt;
+      });
+      const price = +document.getElementById('prop-price').value || 0;
+      document.getElementById('total-paid').textContent = 'Rs' + fmt(total);
+      document.getElementById('total-equity').textContent = 'Rs' + fmt(equity);
+      document.getElementById('total-loan').textContent = 'Rs' + fmt(loan);
+      document.getElementById('remaining').textContent = 'Rs' + fmt(Math.max(0, price - total));
+    }
+    document.getElementById('schedule-rows').addEventListener('input', updateScheduleSummary);
+    document.getElementById('prop-price').addEventListener('input', updateScheduleSummary);
+    function syncLoan() {
+      const price = +document.getElementById('prop-price').value || 0;
+      document.getElementById('loan-principal').value = Math.round(price * 0.8);
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
+      document.getElementById('panel-' + name).classList.add('active');
+      setTimeout(redrawAllCharts, 100);
+    }
+    function toggleTable(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
+
+    function getCssVar(name) { return getComputedStyle(document.body).getPropertyValue(name).trim(); }
+
+    function setupCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return null;
+      const parent = canvas.parentElement;
+      const W = parent.clientWidth - 32;
+      const H = 300;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(W * dpr));
+      canvas.height = Math.max(1, Math.floor(H * dpr));
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      return { ctx, W, H };
+    }
+
+    function drawLineChart(canvasId, datasets, labels) {
+      const c = setupCanvas(canvasId);
+      if (!c) return;
+      const { ctx, W, H } = c;
+      const pad = { top: 30, right: 20, bottom: 40, left: 70 };
+      const gw = Math.max(10, W - pad.left - pad.right);
+      const gh = Math.max(10, H - pad.top - pad.bottom);
+      const allVals = datasets.flatMap(d => d.data);
+      const minY = Math.min(0, ...allVals);
+      const maxY = Math.max(...allVals) * 1.05;
+      const range = maxY - minY || 1;
+      ctx.clearRect(0, 0, W, H);
+      const gridColor = getCssVar('--chart-grid');
+      const textColor = getCssVar('--chart-text');
+
+      ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
+      ctx.font = "11px sans-serif"; ctx.fillStyle = textColor;
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (let i = 0; i <= 5; i++) {
+        const y = pad.top + gh - (i / 5) * gh;
+        const val = minY + (i / 5) * range;
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+        ctx.fillText(fmt(val), pad.left - 8, y);
+      }
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      labels.forEach((lab, i) => {
+        const x = pad.left + (i / (labels.length - 1 || 1)) * gw;
+        ctx.fillText(lab, x, pad.top + gh + 8);
+      });
+
+      datasets.forEach(ds => {
+        ctx.strokeStyle = ds.color; ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ds.data.forEach((v, i) => {
+          const x = pad.left + (i / (ds.data.length - 1 || 1)) * gw;
+          const y = pad.top + gh - ((v - minY) / range) * gh;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        ctx.fillStyle = ds.color;
+        const dotStep = Math.max(1, Math.floor(ds.data.length / 20));
+        for (let i = 0; i < ds.data.length; i += dotStep) {
+          const x = pad.left + (i / (ds.data.length - 1 || 1)) * gw;
+          const y = pad.top + gh - ((ds.data[i] - minY) / range) * gh;
+          ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+        }
+      });
+
+      let lx = pad.left + 10, ly = 10;
+      datasets.forEach(ds => {
+        ctx.fillStyle = ds.color; ctx.fillRect(lx, ly, 12, 3);
+        ctx.fillStyle = textColor; ctx.font = "11px sans-serif";
+        ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        ctx.fillText(ds.label, lx + 18, ly + 1.5);
+        lx += ctx.measureText(ds.label).width + 40;
+      });
+    }
+
+    function drawStackedBarChart(canvasId, labels, series) {
+      const c = setupCanvas(canvasId);
+      if (!c) return;
+      const { ctx, W, H } = c;
+      const pad = { top: 30, right: 20, bottom: 40, left: 70 };
+      const gw = Math.max(10, W - pad.left - pad.right);
+      const gh = Math.max(10, H - pad.top - pad.bottom);
+      let maxY = 0;
+      for (let i = 0; i < labels.length; i++) {
+        let sum = 0; series.forEach(s => sum += s.data[i] || 0); maxY = Math.max(maxY, sum);
+      }
+      maxY *= 1.05; if (maxY === 0) maxY = 1;
+      ctx.clearRect(0, 0, W, H);
+      const gridColor = getCssVar('--chart-grid');
+      const textColor = getCssVar('--chart-text');
+
+      ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
+      ctx.font = "11px sans-serif"; ctx.fillStyle = textColor;
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (let i = 0; i <= 5; i++) {
+        const y = pad.top + gh - (i / 5) * gh;
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+        ctx.fillText(fmt(maxY * i / 5), pad.left - 8, y);
+      }
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      labels.forEach((lab, i) => {
+        const x = pad.left + (i / (labels.length - 1 || 1)) * gw;
+        ctx.fillText(lab, x, pad.top + gh + 8);
+      });
+
+      const barW = (gw / labels.length) * 0.6;
+      series.forEach((s, si) => {
+        ctx.fillStyle = s.color;
+        s.data.forEach((v, i) => {
+          let base = 0;
+          for (let j = 0; j < si; j++) base += series[j].data[i] || 0;
+          const x = pad.left + (i / labels.length) * gw + (gw / labels.length - barW) / 2;
+          const y = pad.top + gh - ((base + v) / maxY) * gh;
+          const h = (v / maxY) * gh;
+          ctx.fillRect(x, y, barW, h);
+        });
+      });
+
+      let lx = pad.left + 10, ly = 10;
+      series.forEach(s => {
+        ctx.fillStyle = s.color; ctx.fillRect(lx, ly, 12, 3);
+        ctx.fillStyle = textColor; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        ctx.fillText(s.label, lx + 18, ly + 1.5);
+        lx += ctx.measureText(s.label).width + 40;
+      });
+    }
+
+    function drawBarChart(canvasId, labels, data, colors) {
+      const c = setupCanvas(canvasId);
+      if (!c) return;
+      const { ctx, W, H } = c;
+      const pad = { top: 30, right: 20, bottom: 50, left: 70 };
+      const gw = Math.max(10, W - pad.left - pad.right);
+      const gh = Math.max(10, H - pad.top - pad.bottom);
+      const maxY = Math.max(...data, 1) * 1.1;
+      ctx.clearRect(0, 0, W, H);
+      const gridColor = getCssVar('--chart-grid');
+      const textColor = getCssVar('--chart-text');
+
+      ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
+      ctx.font = "11px sans-serif"; ctx.fillStyle = textColor;
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (let i = 0; i <= 5; i++) {
+        const y = pad.top + gh - (i / 5) * gh;
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+        ctx.fillText(fmt(maxY * i / 5), pad.left - 8, y);
+      }
+
+      const barW = (gw / data.length) * 0.4;
+      data.forEach((v, i) => {
+        const x = pad.left + (i / data.length) * gw + (gw / data.length - barW) / 2;
+        const h = (v / maxY) * gh;
+        const y = pad.top + gh - h;
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fillRect(x, y, barW, h);
+        ctx.fillStyle = textColor; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+        ctx.fillText(labels[i], x + barW / 2, pad.top + gh + 16);
+        ctx.fillText(fmt(v), x + barW / 2, y - 4);
+      });
+    }
+
+    let amortData = null, prepayDataA = null, baseData = null;
+
+    function runAllCalculations() {
+      document.getElementById('results-area').classList.remove('hidden');
+      calcAmort(); calcPrepay(); calcRatecut();
+      setTimeout(redrawAllCharts, 150);
+    }
+
+    function calcAmort() {
+      const P = +document.getElementById('loan-principal').value;
+      const rate = +document.getElementById('loan-rate').value / 100;
+      const years = +document.getElementById('loan-tenure').value;
+      const n = years * 12; const r = rate / 12;
+      const emi = getEMI(P, r, n);
+      const total = emi * n; const interest = total - P;
+
+      document.getElementById('a-em').textContent = 'Rs' + fmt(emi);
+      document.getElementById('a-total').textContent = 'Rs' + fmt(total);
+      document.getElementById('a-interest').textContent = 'Rs' + fmt(interest);
+      document.getElementById('a-ratio').textContent = (interest / P * 100).toFixed(1) + '%';
+
+      let bal = P, html = '';
+      const labels = [], principals = [], interests = [], balances = [];
+      for (let i = 1; i <= n; i++) {
+        const int = bal * r; const pri = emi - int; bal -= pri;
+        if (bal < 0.01) bal = 0;
+        html += '<tr><td>' + i + '</td><td>' + fmt2(emi) + '</td><td>' + fmt2(int) + '</td><td>' + fmt2(pri) + '</td><td>' + fmt2(bal) + '</td></tr>';
+        if (i % 12 === 0 || i === 1 || i === n) {
+          labels.push(i); principals.push(pri); interests.push(int); balances.push(bal);
+        }
+      }
+      document.getElementById('a-tbody').innerHTML = html;
+      document.getElementById('a-showtable').checked = false;
+      document.getElementById('a-tablewrap').classList.add('hidden');
+      amortData = { labels, principals, interests, balances, emi, total, interest, P, r, n };
+      baseData = { P, r, n, emi };
+    }
+
+    function calcPrepay() {
+      if (!baseData) return;
+      const { P, r, n, emi } = baseData;
+      const prepayAmt = +document.getElementById('loan-prepay').value || 0;
+      const every = +document.getElementById('loan-prepay-every').value || 999;
+      const start = 12;
+      const baseTotalInt = emi * n - P;
+      document.getElementById('p-base-em').textContent = 'Rs' + fmt(emi);
+      document.getElementById('p-base-int').textContent = 'Rs' + fmt(baseTotalInt);
+
+      let balA = P, monthA = 0, totalIntA = 0, totalPrepayA = 0, htmlA = '';
+      const balALine = [], balBaseLine = [], cumIntA = [], cumIntBase = [];
+      let balBase = P, cumBase = 0, cumA = 0;
+      while (balA > 0.01 && monthA < 600) {
+        monthA++;
+        const intA = balA * r; const priA = emi - intA;
+        let prepay = 0;
+        if (monthA >= start && (monthA - start) % every === 0) {
+          prepay = Math.min(prepayAmt, balA - priA); if (prepay < 0) prepay = 0;
+        }
+        balA -= (priA + prepay); totalIntA += intA; totalPrepayA += prepay;
+        if (balA < 0.01) balA = 0;
+        htmlA += '<tr><td>' + monthA + '</td><td>' + fmt2(emi) + '</td><td>' + fmt2(intA) + '</td><td>' + fmt2(priA) + '</td><td>' + (prepay > 0 ? fmt(prepay) : '-') + '</td><td>' + fmt2(balA) + '</td></tr>';
+        const intB = balBase * r; const priB = emi - intB; balBase -= priB; cumBase += intB; cumA += intA;
+        if (monthA % 12 === 0 || monthA === 1) {
+          balALine.push(balA); balBaseLine.push(Math.max(0, balBase)); cumIntA.push(cumA); cumIntBase.push(cumBase);
+        }
+      }
+      document.getElementById('p-sa-tenure').textContent = monthA + ' mo (' + (monthA / 12).toFixed(1) + ' yr)';
+      document.getElementById('p-sa-int').textContent = 'Rs' + fmt(totalIntA);
+      document.getElementById('p-sa-save').textContent = 'Rs' + fmt(baseTotalInt - totalIntA);
+      document.getElementById('p-sa-prepaid').textContent = 'Rs' + fmt(totalPrepayA);
+
+      let balB = P, currentEMI = emi, totalIntB = 0, totalPrepayB = 0;
+      for (let i = 1; i <= n; i++) {
+        const int = balB * r; const pri = currentEMI - int; let prepay = 0;
+        if (i >= start && (i - start) % every === 0) { prepay = Math.min(prepayAmt, balB - pri); if (prepay < 0) prepay = 0; }
+        balB -= (pri + prepay); totalIntB += int; totalPrepayB += prepay;
+        if (balB <= 0.01) { balB = 0; break; }
+        const rem = n - i;
+        if (prepay > 0 && rem > 0 && balB > 0) currentEMI = getEMI(balB, r, rem);
+      }
+      document.getElementById('p-sb-em').textContent = 'Rs' + fmt(currentEMI);
+      document.getElementById('p-sb-int').textContent = 'Rs' + fmt(totalIntB);
+      document.getElementById('p-sb-save').textContent = 'Rs' + fmt(baseTotalInt - totalIntB);
+      document.getElementById('p-sb-prepaid').textContent = 'Rs' + fmt(totalPrepayB);
+
+      document.getElementById('p-tbody').innerHTML = htmlA;
+      document.getElementById('p-showtable').checked = false;
+      document.getElementById('p-tablewrap').classList.add('hidden');
+      prepayDataA = { balALine, balBaseLine, cumIntA, cumIntBase, labels: balALine.map((_, i) => ((i + 1) * 12) + '') };
+    }
+
+    function calcRatecut() {
+      if (!baseData) return;
+      const { P, r, n, emi } = baseData;
+      const newRateVal = +document.getElementById('r-newrate').value / 100;
+      const rNew = newRateVal / 12;
+      const baseTotalInt = emi * n - P;
+      document.getElementById('r-base-em').textContent = 'Rs' + fmt(emi);
+      document.getElementById('r-base-int').textContent = 'Rs' + fmt(baseTotalInt);
+
+      const emi1 = getEMI(P, rNew, n);
+      const int1 = emi1 * n - P;
+      document.getElementById('r-o1-em').textContent = 'Rs' + fmt(emi1);
+      document.getElementById('r-o1-int').textContent = 'Rs' + fmt(int1);
+      document.getElementById('r-o1-save').textContent = 'Rs' + fmt(baseTotalInt - int1);
+
+      const n2 = Math.log(emi / (emi - P * rNew)) / Math.log(1 + rNew);
+      const n2m = Math.ceil(n2);
+      const int2 = emi * n2m - P;
+      document.getElementById('r-o2-tenure').textContent = n2m + ' mo (' + (n2m / 12).toFixed(1) + ' yr)';
+      document.getElementById('r-o2-int').textContent = 'Rs' + fmt(int2);
+      document.getElementById('r-o2-save').textContent = 'Rs' + fmt(baseTotalInt - int2);
+    }
+
+    function getColors() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      return {
+        pri: isDark ? '#60a5fa' : '#2563eb', int: isDark ? '#f87171' : '#dc2626',
+        bal: isDark ? '#4ade80' : '#16a34a', base: isDark ? '#8a8a9a' : '#8a8a9a',
+        opt1: isDark ? '#60a5fa' : '#2563eb', opt2: isDark ? '#4ade80' : '#16a34a'
+      };
+    }
+
+    function drawAmortCharts() {
+      if (!amortData) return;
+      const { labels, principals, interests, balances } = amortData;
+      const c = getColors();
+      drawStackedBarChart('chart-amort', labels, [{ label: 'Principal', data: principals, color: c.pri }, { label: 'Interest', data: interests, color: c.int }]);
+      drawLineChart('chart-balance', [{ label: 'Outstanding Balance', data: balances, color: c.bal }], labels);
+    }
+
+    function drawPrepayCharts() {
+      if (!prepayDataA) return;
+      const { balALine, balBaseLine, cumIntA, cumIntBase, labels } = prepayDataA;
+      const c = getColors();
+      drawLineChart('chart-prepay', [{ label: 'Base (no prepay)', data: balBaseLine, color: c.base }, { label: 'With Pre-pay', data: balALine, color: c.bal }], labels);
+      drawLineChart('chart-prepay-int', [{ label: 'Base interest', data: cumIntBase, color: c.base }, { label: 'With Pre-pay', data: cumIntA, color: c.bal }], labels);
+    }
+
+    function drawRatecutCharts() {
+      if (!baseData) return;
+      const { P, r, n, emi } = baseData;
+      const newRateVal = +document.getElementById('r-newrate').value / 100;
+      const rNew = newRateVal / 12;
+      const emi1 = getEMI(P, rNew, n);
+      const n2 = Math.ceil(Math.log(emi / (emi - P * rNew)) / Math.log(1 + rNew));
+      const c = getColors();
+      const baseBal = [], opt1Bal = [], opt2Bal = [], labels = [];
+      let b0 = P, b1 = P, b2 = P;
+      const maxM = Math.max(n, n2);
+      for (let i = 1; i <= maxM; i++) {
+        b0 -= (emi - b0 * r); b1 -= (emi1 - b1 * rNew);
+        if (i <= n2) b2 -= (emi - b2 * rNew);
+        if (i % 12 === 0 || i === 1 || i === maxM) {
+          labels.push(i + ''); baseBal.push(Math.max(0, b0)); opt1Bal.push(Math.max(0, b1)); opt2Bal.push(i <= n2 ? Math.max(0, b2) : 0);
+        }
+      }
+      drawLineChart('chart-ratecut', [{ label: 'Current', data: baseBal, color: c.base }, { label: 'Lower EMI', data: opt1Bal, color: c.opt1 }, { label: 'Same EMI', data: opt2Bal, color: c.opt2 }], labels);
+      drawBarChart('chart-ratecut-bar', ['Current', 'Lower EMI', 'Same EMI'], [emi * n - P, emi1 * n - P, emi * n2 - P], [c.base, c.opt1, c.opt2]);
+    }
+
+    function redrawAllCharts() {
+      drawAmortCharts(); drawPrepayCharts(); drawRatecutCharts();
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(redrawAllCharts, 200); });
+    updateScheduleSummary();
+  </script>
+</body>
+
+</html>
